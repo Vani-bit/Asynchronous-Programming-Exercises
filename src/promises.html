@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promises Example</title>
+    <link href="./output.css" rel="stylesheet"></link>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="container bg-white p-8 rounded-lg shadow-lg text-center">
+        <h1 class="text-2xl font-bold mb-4">Promises Implementation</h1>
+        <button id="promiseButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+            Fetch Data
+        </button>
+        <div id="result" class="mt-6 text-gray-700"></div>
+    </div>
+
+    <script>
+        
+        document.getElementById('promiseButton').addEventListener('click', () => {
+            //  loading message 
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerText = "Loading...";
+
+            // Create a Promise 
+            const fetchData = new Promise((resolve, reject) => {
+                
+                const timeout = setTimeout(() => {
+                    reject("Operation timed out.");
+                }, 5000);
+
+                // Fetch data from API
+                fetch('https://dummyjson.com/posts')
+                    .then(response => response.json())
+                    .then(data => {
+                        clearTimeout(timeout); 
+                        resolve(data.posts); 
+                    })
+                    .catch(error => {
+                        clearTimeout(timeout); 
+                        reject("Error fetching data.");
+                    });
+            });
+
+           
+            fetchData
+                .then(posts => {
+                    
+                    const postsList = posts.map(post => `<li>${post.title}</li>`).join('');
+                    resultDiv.innerHTML = `<ul class="mt-4 list-disc list-inside">${postsList}</ul>`;
+                })
+                .catch(errorMessage => {
+                    
+                    resultDiv.innerText = errorMessage;
+                });
+        });
+    </script>
+</body>
+</html>
